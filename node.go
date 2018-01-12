@@ -49,7 +49,7 @@ func (n *Node) SetNetworkEventHub(neh <-chan *NetworkEvent) {
 	n.networkChan = neh
 	go func() {
 		for msg := range n.networkChan {
-			fmt.Printf("network chan. id: %q msg: %# v \n ", n.id, pretty.Formatter(msg))
+			fmt.Printf("network chan. node id: %q msg: %# v \n ", n.id, pretty.Formatter(msg))
 		}
 	}()
 }
@@ -60,6 +60,9 @@ func (n *Node) SendEventToNetwork(event *NetworkEvent) error {
 }
 func (n *Node) startAcceptingPeers() {
 	for node := range n.joinChan {
+		if node.id == n.id {
+			continue
+		}
 		n.mainCluster.fsm.Event("node joins", node)
 	}
 }
