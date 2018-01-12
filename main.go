@@ -2,25 +2,27 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 func main() {
-	n := NewNode()
-	err := n.fsm.Event("setup", "hadi", "bakam")
-	if err != nil {
-		fmt.Println("err while transition-->", err)
+	network := NewNetWork()
+	// node := NewNode(network)
+
+	if err := network.AddNode(NewNode()); err != nil {
+		fmt.Println("err-->", err)
 	}
-
-	fmt.Println("node :" + n.fsm.Current())
-
-	c := NewCluster()
-
-	fmt.Println(c.fsm.Current())
-
-	err = c.fsm.Event("complete", "anber", "dostum")
-	if err != nil {
-		fmt.Println("err while transition-->", err)
+	if err := network.AddNode(NewNode()); err != nil {
+		fmt.Println("err-->", err)
 	}
-
-	fmt.Println("cluster :" + c.fsm.Current())
+	if err := network.AddNode(NewNode()); err != nil {
+		fmt.Println("err-->", err)
+	}
+	if err := network.AddNode(NewNode()); err != nil {
+		fmt.Println("err-->", err)
+	}
+	network.SendMessageToNetwork(&NetworkEvent{
+		Name: "test",
+	})
+	time.Sleep(time.Second)
 }
