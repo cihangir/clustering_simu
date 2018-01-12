@@ -6,6 +6,7 @@ import (
 
 	"github.com/kr/pretty"
 	"github.com/looplab/fsm"
+	uuid "github.com/satori/go.uuid"
 )
 
 func NewNetWork() *Network {
@@ -27,6 +28,7 @@ func (n *Network) Missing(e *fsm.Event) {
 }
 
 type NetworkEvent struct {
+	id   string
 	Name string
 }
 
@@ -57,6 +59,9 @@ func (n *Network) AddNode(peer *Node) error {
 }
 
 func (n *Network) SendMessageToNetwork(msg *NetworkEvent) error {
+	if msg.id == "" {
+		msg.id = uuid.Must(uuid.NewV4()).String()
+	}
 	const concurrency = 3
 	workChan := make(chan chan *NetworkEvent)
 	var wg sync.WaitGroup
