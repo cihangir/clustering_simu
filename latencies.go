@@ -10,19 +10,23 @@ func init() {
 }
 
 // all consts are in ms resolution.
-const (
+var (
 	maxNetworkJoinLatency  = 100
 	maxNetworkEventLatency = 400 // around the world latency
 )
 
-func addLatency(max int32) {
-	time.Sleep(time.Millisecond * time.Duration(rand.Int31n(max)))
+func addLatency(max int) {
+	time.Sleep(time.Millisecond * time.Duration(rand.Int31n(int32(max))))
 }
 
 func addNetworkJoinLatency() {
-	addLatency(maxNetworkJoinLatency)
+	if maxNetworkJoinLatency != 0 {
+		addLatency(maxNetworkJoinLatency)
+	}
 }
 
 func addNetworkEventLatency() {
-	addLatency(maxNetworkEventLatency)
+	if maxNetworkEventLatency != 0 {
+		addLatency(maxNetworkEventLatency)
+	}
 }
