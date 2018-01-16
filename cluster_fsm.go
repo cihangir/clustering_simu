@@ -11,12 +11,12 @@ func newClusterFSM(c *Cluster) *fsm.FSM {
 	return fsm.NewFSM(
 		"idle",
 		fsm.Events{
-			fsm.EventDesc{Name: "node leaves", Src: []string{"idle", "not complete", "critical", "complete"}, Dst: "node leaving"},
-			fsm.EventDesc{Name: "node joins", Src: []string{"idle", "not complete", "critical", "complete"}, Dst: "node joining"},
-			fsm.EventDesc{Name: "critical", Src: []string{"idle", "not complete", "critical", "missing"}, Dst: "requesting slave node"},
-			fsm.EventDesc{Name: "missing", Src: []string{"idle", "not complete", "critical", "missing"}, Dst: "recovering"},
-			fsm.EventDesc{Name: "unknown", Src: []string{"idle", "not complete", "critical", "missing"}, Dst: "recovering"},
-			fsm.EventDesc{Name: "complete", Src: []string{"idle", "not complete", "critical", "missing"}, Dst: "complete"}, // event names and states are different...
+			fsm.EventDesc{Name: "node leaves", Src: []string{"idle", "not complete", "critical", "complete", "node joining"}, Dst: "node leaving"},
+			fsm.EventDesc{Name: "node joins", Src: []string{"idle", "not complete", "critical", "complete", "node joining"}, Dst: "node joining"},
+			fsm.EventDesc{Name: "critical", Src: []string{"idle", "not complete", "critical", "missing", "node joining"}, Dst: "requesting slave node"},
+			fsm.EventDesc{Name: "missing", Src: []string{"idle", "not complete", "critical", "missing", "node joining"}, Dst: "recovering"},
+			fsm.EventDesc{Name: "unknown", Src: []string{"idle", "not complete", "critical", "missing", "node joining"}, Dst: "recovering"},
+			fsm.EventDesc{Name: "complete", Src: []string{"idle", "not complete", "critical", "missing", "node joining"}, Dst: "complete"}, // event names and states are different...
 		},
 		fsm.Callbacks{
 			"node leaving":             c.NodeLeaving,

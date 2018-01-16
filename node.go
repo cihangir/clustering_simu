@@ -56,13 +56,17 @@ func (n *Node) SetNetworkEventHub(neh <-chan *NetworkEvent) {
 
 func (n *Node) SendEventToNetwork(event *NetworkEvent) error {
 	return n.network.SendMessageToNetwork(event)
-
 }
+
 func (n *Node) startAcceptingPeers() {
 	for node := range n.joinChan {
-		if node.id == n.id {
-			continue
+		////////////////////////////////////
+		// Set other peer's (node) cluster as this ones (n), because they join to us.
+		////////////////////////////////////
+
+		node.mainCluster = n.mainCluster
+		if err := n.mainCluster.addNode(node); err != nil {
+			fmt.Println("err while adding to main cluster-->", err)
 		}
-		n.mainCluster.fsm.Event("node joins", node)
 	}
 }
