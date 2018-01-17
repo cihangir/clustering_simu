@@ -44,8 +44,8 @@ func (n *Network) AddNode(peer *Node) error {
 
 	// TODO: change this to a gossip based system.
 	neh := make(chan *NetworkEvent)
-	n.networkEventHubs = append(n.networkEventHubs, neh)
 	peer.SetNetworkEventHub(neh)
+	n.networkEventHubs = append(n.networkEventHubs, neh)
 
 	peer.network = n
 	go func() {
