@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"sync"
 
@@ -48,7 +47,9 @@ func (c *Cluster) MoveToNewCluster(nodes ...*Node) error {
 		if err := newCluster.addNode(node); err != nil {
 			return err
 		}
-		c.removeNode(node)
+		if err := c.removeNode(node); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -115,5 +116,5 @@ func (c *Cluster) removeNode(n *Node) error {
 	}
 	c.inQueue = inQueue
 
-	return errors.New("not found")
+	return nil
 }
