@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/kr/pretty"
 	"github.com/looplab/fsm"
 )
 
@@ -76,18 +75,18 @@ func (c *Cluster) RequestingMember(e *fsm.Event) {
 	// we can continue to function without a node, but it is always better to
 	// have a full quorum
 	fmt.Println("requesting a new member-->")
-
-	fmt.Printf("e %# v \n ", pretty.Formatter(e))
+	fmt.Println("transitioned to " + e.FSM.Current())
 }
 
 func (c *Cluster) RequestingSlave(e *fsm.Event) {
-	fmt.Printf("e %# v \n ", pretty.Formatter(e))
+
+	fmt.Println("transitioned to " + e.FSM.Current())
 }
 
 func (c *Cluster) RequestingHealthChecks(e *fsm.Event) {
 	// we should request health checks from nearest possible clusters, if they
 	// are not on critical state
-	fmt.Printf("e %# v \n ", pretty.Formatter(e))
+	fmt.Println("transitioned to " + e.FSM.Current())
 }
 
 func (c *Cluster) NodeJoining(e *fsm.Event) {
@@ -121,13 +120,13 @@ func (c *Cluster) NodeJoining(e *fsm.Event) {
 }
 
 func (c *Cluster) RecoveringCluster(e *fsm.Event) {
-	fmt.Printf("e %# v \n ", pretty.Formatter(e))
+	fmt.Println("transitioned to " + e.FSM.Current())
 }
 
 func (c *Cluster) Complete(e *fsm.Event) {
 	// TODO: notify other "listening members" that now we are on complete state,
 	// there is nothing to worry about us anymore.
-	fmt.Printf("e %# v \n ", pretty.Formatter(e))
+	fmt.Println("transitioned to " + e.FSM.Current())
 }
 
 func (c *Cluster) LogTransition(e *fsm.Event) {
