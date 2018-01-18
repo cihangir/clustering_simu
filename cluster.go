@@ -43,7 +43,6 @@ func (c *Cluster) MoveToNewCluster(nodes ...*Node) error {
 	// TODO: check if on-move are we going into critical state
 	newCluster := NewCluster()
 	for _, node := range nodes {
-		// node.
 		if err := newCluster.addNode(node); err != nil {
 			return err
 		}
