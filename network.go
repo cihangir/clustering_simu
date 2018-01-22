@@ -37,8 +37,6 @@ type Peer interface {
 	SetRandomJoinHub(<-chan *Node)
 }
 
-// FindSlot finds the slot within the network, if slot is not available, an
-// error will be returned
 func (n *Network) AddNode(peer *Node) error {
 	peer.SetRandomJoinHub(n.joinChan)
 

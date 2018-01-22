@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
-
-	"github.com/kr/pretty"
 )
 
 func main() {
-	count := 5
+	count := 15
 
 	network := NewNetWork()
 	arr := make([]*Node, count)
@@ -19,16 +18,25 @@ func main() {
 			fmt.Println("err-->", err)
 		}
 		arr[i] = n
+		fmt.Println("n-->", n)
 		time.Sleep(time.Second)
 	}
+	go func() {
+		for {
+			addClusterAddNewNodeLatency()
+			n := NewNode()
+			if err := network.AddNode(n); err != nil {
+				fmt.Println("err-->", err)
+			}
+			arr = append(arr, n)
+		}
 
-	network.SendMessageToNetwork(&NetworkEvent{
-		Name: "test",
-	})
-	time.Sleep(time.Second * 3)
-	for i := 0; i < count; i++ {
-		fmt.Printf("arr[%-3d].mainCluster.id: [%s] - node count: %-3d, queue count: %-3d\n", i, arr[i].mainCluster.id, len(arr[i].mainCluster.nodes), len(arr[i].mainCluster.inQueue))
+	}()
+	for {
+		addClusterRemoveNodeLatency()
+		if err := arr[rand.Intn(len(arr)-1)].Close(); err != nil {
+			fmt.Println("err-->", err)
+		}
 	}
-
-	fmt.Printf("count %# v \n ", pretty.Formatter(count))
+	// select {}
 }
