@@ -11,6 +11,7 @@ func init() {
 
 // all consts are in ms resolution.
 var (
+	clusterMessageLatency  = 100
 	maxNetworkJoinLatency  = 100
 	maxNetworkEventLatency = 400 // around the world latency
 )
@@ -28,5 +29,11 @@ func addNetworkJoinLatency() {
 func addNetworkEventLatency() {
 	if maxNetworkEventLatency != 0 {
 		addLatency(maxNetworkEventLatency)
+	}
+}
+
+func addClusterMessageLatency() {
+	if clusterMessageLatency != 0 {
+		addLatency(clusterMessageLatency)
 	}
 }
