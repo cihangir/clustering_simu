@@ -39,8 +39,9 @@ type Cluster struct {
 }
 
 type ClusterMessage struct {
-	Type string
-	Data string
+	Type   string
+	NodeID string
+	Data   string
 }
 
 // MoveToNewCluster forms a new cluster with a subset of the existing cluster
@@ -131,7 +132,7 @@ func (c *Cluster) removeNode(n *Node) error {
 func (c *Cluster) SendMessageToCluster(msg *ClusterMessage) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	// fmt.Printf("c.nodes %# v \n ", pretty.Formatter(c.nodes))
+
 	for _, node := range c.nodes {
 		go func(node *Node) {
 			////////////////////////////////////////////////////////
