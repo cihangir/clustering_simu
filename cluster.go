@@ -10,9 +10,10 @@ import (
 
 func NewCluster() *Cluster {
 	c := &Cluster{
-		clusterSize:  5,
-		criticalSize: 3,
-		id:           uuid.Must(uuid.NewV4()).String(),
+		clusterSize:      5,
+		criticalSize:     3,
+		id:               uuid.Must(uuid.NewV4()).String(),
+		intraClusterConn: make(chan *ClusterMessage),
 	}
 
 	c.fsm = newClusterFSM(c)
@@ -20,10 +21,9 @@ func NewCluster() *Cluster {
 }
 
 type Cluster struct {
-	id      string
-	fsm     *fsm.FSM
-	network *Network
-	master  *Node
+	id     string
+	fsm    *fsm.FSM
+	master *Node
 
 	// protects the followings
 	mu sync.Mutex
@@ -34,6 +34,13 @@ type Cluster struct {
 
 	clusterSize  int
 	criticalSize int
+
+	intraClusterConn chan *ClusterMessage
+}
+
+type ClusterMessage struct {
+	Type string
+	Data string
 }
 
 // MoveToNewCluster forms a new cluster with a subset of the existing cluster
@@ -115,5 +122,39 @@ func (c *Cluster) removeNode(n *Node) error {
 	}
 	c.inQueue = inQueue
 
+	return nil
+}
+
+// SendMessageToCluster sends a message to the all members of this cluster
+// TODO:
+// change this sync code to accept a channel and send messages over that
+func (c *Cluster) SendMessageToCluster(msg *ClusterMessage) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	// fmt.Printf("c.nodes %# v \n ", pretty.Formatter(c.nodes))
+	for _, node := range c.nodes {
+		go func(node *Node) {
+			////////////////////////////////////////////////////////
+			//// latency between cluster member's communication/////
+			addClusterMessageLatency() /////////////////////////////
+			////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////
+			if err := node.HandleClusterMessages(msg); err != nil {
+				fmt.Println("err-->", err)
+			}
+		}(node)
+	}
+	for _, node := range c.inQueue {
+		go func(node *Node) {
+			////////////////////////////////////////////////////////
+			//// latency between cluster member's communication/////
+			addClusterMessageLatency() /////////////////////////////
+			////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////
+			if err := node.HandleClusterMessages(msg); err != nil {
+				fmt.Println("err-->", err)
+			}
+		}(node)
+	}
 	return nil
 }
