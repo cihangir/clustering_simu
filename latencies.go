@@ -11,6 +11,8 @@ func init() {
 
 // all consts are in ms resolution.
 var (
+	clusterAddNewNode      = 100
+	clusterRemoveNode      = 100
 	clusterMessageLatency  = 100
 	maxNetworkJoinLatency  = 100
 	maxNetworkEventLatency = 400 // around the world latency
@@ -35,5 +37,17 @@ func addNetworkEventLatency() {
 func addClusterMessageLatency() {
 	if clusterMessageLatency != 0 {
 		addLatency(clusterMessageLatency)
+	}
+}
+
+func addClusterAddNewNodeLatency() {
+	if clusterAddNewNode != 0 {
+		addLatency(clusterAddNewNode)
+	}
+}
+
+func addClusterRemoveNodeLatency() {
+	if clusterRemoveNode != 0 {
+		addLatency(clusterRemoveNode)
 	}
 }
